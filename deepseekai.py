@@ -6,6 +6,8 @@ import os
 OPRO_DEEPSEEK_KEY = os.environ.get("OPRO_DEEPSEEK_KEY")
 OPRO_DEEPSEEK_URL = "https://openrouter.ai/api/v1/chat/completions"
 
+# def ask_ai_ollama(content):
+
 def ask_ai(content):
     """Send a request to DeepSeek AI and return the response."""
     response = requests.post(

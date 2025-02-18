@@ -4,6 +4,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from dotenv import load_dotenv
 from searchbooks import search_books, get_volume_id
 from deepseekai import ask_ai, similar_book_ai
+import json
 
 # Load environment variables
 load_dotenv()
@@ -50,6 +51,7 @@ def search():
         books = search_books(query, max_results)  
 
     return render_template("home.html", books=books) 
+
 @app.route('/bookpreview/<volume_id>')
 def bookpreview(volume_id):
     """Fetch book details directly using Volume ID."""
@@ -83,15 +85,21 @@ def similarbook(volume_id):
     if not book:
         return redirect(f"/bookpreview/{volume_id}")  
 
-    #
-    response = similar_book_ai(book)  
-    recommendbook = response.get("choices", [{}])[0].get("message", {}).get("content", "No response.")
-
-    app.logger.info("AI Recommendation: %s", recommendbook)
-    max_results = 3
-    simbooks = search_books(recommendbook, max_results) if recommendbook else []
     
-    return render_template("similar.html", book=book, simbooks=simbooks)
+    response = similar_book_ai(book)  
+    recommnededBookListJSON = response.get("choices", [{}])[0].get("message", {}).get("content", "No response.") # "['book1', 'book2']"
+    app.logger.info("AI Recommendation: %s", recommnededBookListJSON)
+    recommendbookNames = json.loads(recommnededBookListJSON) # ['book1', 'book2']
+    # recommendbooks[0] -> "book1"
+    app.logger.info("AI Recommendation: %s", recommendbook)
+
+    max_results = 3
+    recommendedBooks = []
+    for bookName in recommendbookNames:
+        searchBookResponse = search_books(bookName, max_results)
+        recommendedBooks.append(searchBookResponse[0])
+
+    return render_template("similar.html", book=book, simbooks=recommendedBooks)
 
 
 if __name__ == "__main__":
