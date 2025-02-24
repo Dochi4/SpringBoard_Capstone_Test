@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Book Preview: {{ book.title }}
+{% endblock %}
+
+{% block content %}
+<!-- Display Book Inforamtion -->
+<h1>Book Preview: {{ book.title }}</h1>
+<img src="{{ book.thumbnail }}" alt="{{ book.title }}" class="img-fluid">
+<div>
+    <p><strong>Authors:</strong> {{ book.authors | join(", ") }}</p>
+    <p><strong>Categories:</strong> {{ book.categories | join(", ") }}</p>
+    <p><strong>Description:</strong> {{book.description | safe }}</p>
+</div>
+
+<!-- Google books Preview Link Button -->
+{% if book.viewability and book.viewability != "NO_PAGES" %}
+<div>
+    <a href="{{ book.preview_link }}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+        View Preview
+    </a>
+    {% else %}
+    <button class="btn btn-secondary" disabled>
+        Preview Unavailable
+    </button>
+    {% endif %}
+    <!-- Book Reccomendation Button -->
+
+    <a href="/bookrecommendation/{{ book.volume_id }}" target="_blank" class="btn btn-secondary">
+        Book Recommendation
+    </a>
+</div>
+
+{% endblock %}

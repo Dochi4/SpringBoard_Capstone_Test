@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Page Title -->
+<h1 id="title" class="text-center mt-5">AI Book Recommendation</h1>
+
+<!-- Compared Book -->
+<div class="book-list">
+    <h2>Books Similar to {{ book.title }}</h2>
+    <img src="{{ book.thumbnail }}" alt="{{ book.title }}" class="img-fluid" loading="lazy">
+    <p><strong>Authors:</strong> {{ book.authors | join(", ") }}</p>
+    <p><strong>Categories:</strong> {{ book.categories | join(", ") }}</p>
+</div>
+
+<!-- Similar Books Results -->
+<div>
+    <h2 class="text-center mt-5">Similar Books</h2>
+    <div id="list-output">
+
+        <div class="row">
+            {% if simbooks %}
+            {% for sim_book in simbooks %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{{ sim_book.thumbnail }}" class="card-img-top" alt="{{ sim_book.title }}" loading="lazy">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ sim_book.title }}</h5>
+                        <p class="card-text">by {{ sim_book.authors | join(", ") }}</p>
+                        <p class="card-text">{{ sim_book.categories | join(", ") }}</p>
+                        <a href="/bookpreview/{{ sim_book.volume_id }}" target="_blank" class="btn btn-primary">View
+                            Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>No similar books found. Try searching for others!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

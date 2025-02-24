@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Search Form -->
+<div class="row mb-4">
+    <form action="/search" method="GET">
+        <input id="search-box" name="q" type="text" class="form-control" placeholder="Search Books...">
+        <button type="submit" class="btn btn-primary mt-2" id="search-btn">Search</button>
+    </form>
+</div>
+
+<!-- Ask AI Form -->
+<div class="row mb-4">
+    <form action="/ask_ai" method="GET">
+        <button type="submit" class="btn btn-secondary mt-2" id="search-btn">Ask AI</button>
+    </form>
+</div>
+
+<!-- Search Results  -->
+{% if books %}
+<div class="book-list">
+    <h2 class="text-center">Search Results</h2>
+
+    <div id="list-output">
+        <div class="row">
+            {% for book in books %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{{ book.thumbnail }}" class="card-img-top" alt="{{ book.title }}" loading="lazy">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ book.title }}</h5>
+                        <p class="card-text">by {{ book.authors | join(", ") }}</p>
+                        <p class="card-text">{{ book.categories | join(", ") }}</p>
+                        <!-- Button to Preview Page -->
+                        <a href="/bookpreview/{{ book.volume_id }}" target="_blank" class="btn btn-primary">View
+                            Details</a>
+                        <a href="/bookrecommendation/{{ book.volume_id }}" target="_blank" class="btn btn-secondary">
+                            Book Recommendation
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
