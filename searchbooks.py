@@ -37,6 +37,7 @@ def search_books(query, max_results):
             "categories": volume_info.get("categories", ["Uncategorized"]),
             "preview_link": volume_info.get("previewLink", ""),
             "viewability": access_info.get("viewability", "UNKNOWN"),
+            "published_date": volume_info.get("publishedDate", "Unknown")
         })
 
     return books
@@ -65,6 +66,7 @@ def get_volume_id(volume_id):
         "categories": volume_info.get("categories", ["Uncategorized"]),
         "preview_link": volume_info.get("previewLink", ""),
         "viewability": access_info.get("viewability", "UNKNOWN"),
+        "published_date": volume_info.get("publishedDate", "Unknown")
     }
 
 

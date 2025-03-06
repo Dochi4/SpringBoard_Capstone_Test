@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g, 
 from flask_debugtoolbar import DebugToolbarExtension
 from dotenv import load_dotenv
 from searchbooks import search_books, get_volume_id
-from deepseekai import ask_ai, similar_book_ai
+from deepseekai import ask_ai, similar_book_ai , similar_descript_ai
 import json
 import re
 # Load environment variables
@@ -52,6 +52,7 @@ def search():
 
     return render_template("home.html", books=books) 
 @app.route('/bookpreview/<volume_id>')
+
 def bookpreview(volume_id):
     """Fetch book details directly using Volume ID."""
     book = get_volume_id(volume_id)
@@ -61,22 +62,6 @@ def bookpreview(volume_id):
         return redirect("/search")
 
     return render_template("books.html", book=book)
-
-@app.route('/ask_ai', methods=["GET", "POST"])
-def ask():
-    """Test the AI """
-    if request.method == "POST":
-        user_question = request.form.get("question") 
-        response = ask_ai(user_question)  
-
-      
-        ai_answer = response.get("choices", [{}])[0].get("message", {}).get("content", "No response.")
-        
-        return render_template("testAi.html", question=user_question, answer=ai_answer)
-
-    return render_template("testAi.html", question=None, answer=None)
-
-from flask import flash, redirect, render_template
 
 @app.route('/bookrecommendation/<volume_id>', methods=["GET", "POST"])
 def bookrecommendation(volume_id):
@@ -88,30 +73,69 @@ def bookrecommendation(volume_id):
     # Get AI recommendations by calling /bookaifetch/<volume_id>
     ai_response = similar_book_ai(book)
 
-    if "error" in ai_response:
-        flash("AI Response Error: {}".format(ai_response["error"]), "error")
-        return redirect(f"/bookpreview/{volume_id}")
 
-    recommended_book_names = list(ai_response.values())  # Get only book titles
 
-   
+    recommendations = ai_response.get("Recommendations", [])  
+
     simbooks = []
-
     max_results = 1  # Fetch only 1 similar book per recommendation
 
-    for book_name in recommended_book_names:
-        search_result = search_books(book_name, max_results)
+    for recommendation in recommendations:
+        book_title = recommendation["title"]
+        reason = recommendation["reason"]  # Get the correct reason for this book
+
+        search_result = search_books(book_title, max_results)
         if search_result:
-            simbooks.append(search_result[0])  
+            simbook_entry = search_result[0]  # Get the first matching book
+            simbook_entry["reason"] = reason  # Attach the correct reason
+            simbooks.append(simbook_entry)  # Append the modified book
 
-    # flash("Similar Books: {}".format(simbooks), "info")
-
-   
     return render_template("similar.html", book=book, simbooks=simbooks)
 
 
+@app.route('/bookrecommendation/description', methods=["GET", "POST"])
+def descriptionrecommendation():
+    """Fetch AI similar books based on user's description."""
+    
+    if request.method == "POST":
+        user_description = request.form.get("user_description")
 
-# THIS WORKS ABOVE !!!!!!!!
+    
+
+        if not user_description:  # Ensure user provides input
+            flash("Please enter a book description!", "warning")
+            return redirect(request.url)
+
+        recommendations = []
+        
+        ai_response = similar_descript_ai(user_description)
+
+        if not ai_response:
+            print("AI Response is empty or invalid.") 
+
+        recommendations = ai_response.get("Recommendations", [])  
+
+        simbooks = []
+
+        max_results = 1 
+
+        for recommendation in recommendations:
+            book_title = recommendation["title"]
+            reason = recommendation["reason"]  
+
+            search_result = search_books(book_title, max_results)
+            if search_result:
+                simbook_entry = search_result[0]  
+                simbook_entry["reason"] = reason  
+                simbooks.append(simbook_entry) 
+
+        return render_template("similar.html", user_description=user_description, simbooks=simbooks)
+
+    
+    return redirect("/search")
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
