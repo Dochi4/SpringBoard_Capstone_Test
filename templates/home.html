@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block title %}
+Book Finder
+{% endblock %}
+
 {% block content %}
 
 <!-- Search Form -->
@@ -10,12 +14,15 @@
     </form>
 </div>
 
-<!-- Ask AI Form -->
-<div class="row mb-4">
-    <form action="/ask_ai" method="GET">
-        <button type="submit" class="btn btn-secondary mt-2" id="search-btn">Ask AI</button>
-    </form>
-</div>
+<!-- User Description from -->
+<form action="/bookrecommendation/description" method="POST" class="mt-4">
+    <div class="mb-3">
+        <label for="user_description" class="form-label">Enter your description of a book</label>
+        <input type="text" id="user_description" name="user_description" class="form-control"
+            placeholder="Type your book description...">
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
 
 <!-- Search Results  -->
 {% if books %}
@@ -30,8 +37,10 @@
                     <img src="{{ book.thumbnail }}" class="card-img-top" alt="{{ book.title }}" loading="lazy">
                     <div class="card-body">
                         <h5 class="card-title">{{ book.title }}</h5>
-                        <p class="card-text">by {{ book.authors | join(", ") }}</p>
-                        <p class="card-text">{{ book.categories | join(", ") }}</p>
+                        <p class="card-text"><strong>Author:</strong> {{ book.authors | join(", ") }}</p>
+                        <p class="card-text"><strong>Published:</strong> {{ book.published_date if book.published_date
+                            else "Unknown" }}</p>
+                        <p class="card-text"><strong>Categories:</strong> {{ book.categories | join(", ") }}</p>
                         <!-- Button to Preview Page -->
                         <a href="/bookpreview/{{ book.volume_id }}" target="_blank" class="btn btn-primary">View
                             Details</a>
