@@ -5,31 +5,36 @@ Book Preview: {{ book.title }}
 {% endblock %}
 
 {% block content %}
-<!-- Display Book Inforamtion -->
-<h1>Book Preview: {{ book.title }}</h1>
-<img src="{{ book.thumbnail }}" alt="{{ book.title }}" class="img-fluid">
-<div>
-    <p><strong>Authors:</strong> {{ book.authors | join(", ") }}</p>
-    <p><strong>Categories:</strong> {{ book.categories | join(", ") }}</p>
-    <p><strong>Description:</strong> {{book.description | safe }}</p>
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ book.thumbnail }}" alt="{{ book.title }}" class="card-img-top ">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h2 class="card-title">{{ book.title }}</h2>
+                    <p class="card-text"><strong>Authors:</strong> {{ book.authors | join(", ") }}</p>
+                    <p class="card-text"><strong>Categories:</strong> {{ book.categories | join(", ") }}</p>
+                    <p class="card-text"><strong>Description:</strong> {{ book.description | safe }}</p>
+                    <div class="mt-3">
+                        {% if book.viewability and book.viewability != "NO_PAGES" %}
+                        <a href="{{ book.preview_link }}" class="btn btn-primary me-2" target="_blank"
+                            rel="noopener noreferrer">
+                            View Preview
+                        </a>
+                        {% else %}
+                        <button class="btn btn-secondary me-2" disabled>
+                            Preview Unavailable
+                        </button>
+                        {% endif %}
+                        <a href="/bookrecommendation/{{ book.volume_id }}" class="btn btn-secondary">
+                            Book Recommendation
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-<!-- Google books Preview Link Button -->
-{% if book.viewability and book.viewability != "NO_PAGES" %}
-<div>
-    <a href="{{ book.preview_link }}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
-        View Preview
-    </a>
-    {% else %}
-    <button class="btn btn-secondary" disabled>
-        Preview Unavailable
-    </button>
-    {% endif %}
-    <!-- Book Reccomendation Button -->
-
-    <a href="/bookrecommendation/{{ book.volume_id }}" target="_blank" class="btn btn-secondary">
-        Book Recommendation
-    </a>
-</div>
-
 {% endblock %}
