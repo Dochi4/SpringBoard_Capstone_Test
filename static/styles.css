@@ -1,31 +1,31 @@
-.loader {
-    border: 16px solid #f3f3f3;
-    /* Light grey background for the spinner */
-    border-top: 16px solid #3498db;
-    /* Blue color for the top */
-    border-radius: 50%;
-    /* Circular shape */
-    width: 120px;
-    /* Spinner size */
-    height: 120px;
-    /* Spinner size */
-    animation: spin 2s linear infinite;
-    /* Spinning animation */
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-        /* Start rotation */
-    }
-
-    100% {
-        transform: rotate(360deg);
-        /* Full rotation */
-    }
-}
-
 body {
-    background-color: rgb(110, 179, 83);
-    /* Set background color */
+    background-color: #f9f9f9;
+}
+
+header {
+    margin-bottom: 2rem;
+}
+
+footer {
+    margin-top: auto;
+    /* Ensures footer stays at the bottom */
+    padding: 1rem 0;
+    background-color: #343a40;
+    color: #fff;
+    text-align: center;
+    width: 100%;
+}
+
+.flash-messages {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 1050;
+}
+
+.img {
+    max-width: 100%;
+    height: auto;
+    /* Optionally set a fixed height if desired, e.g.: */
+    height: 350px;
 }
