@@ -1,4 +1,4 @@
-# newbookai-capstone1
+# Newbookai-capstone1
 
 ## Project Overview
 
