@@ -70,25 +70,29 @@ def bookrecommendation(volume_id):
     if not book:
         return redirect(f"/bookpreview/{volume_id}")
 
-    # Get AI recommendations by calling /bookaifetch/<volume_id>
+    # Get AI recommendations by calling the AI function
     ai_response = similar_book_ai(book)
+    # Check for error in AI response
+    if "error" in ai_response:
+        flash(f"AI Error: {ai_response['error']}", "error")
+        return redirect(f"/bookpreview/{volume_id}")
 
-
-
-    recommendations = ai_response.get("Recommendations", [])  
-
+    recommendations = ai_response.get("Recommendations", [])
     simbooks = []
     max_results = 1  # Fetch only 1 similar book per recommendation
 
     for recommendation in recommendations:
-        book_title = recommendation["title"]
-        reason = recommendation["reason"]  # Get the correct reason for this book
+        # Use .get() to avoid KeyError if keys are missing
+        book_title = recommendation.get("title")
+        reason = recommendation.get("reason")
+        if not book_title:
+            continue
 
         search_result = search_books(book_title, max_results)
         if search_result:
-            simbook_entry = search_result[0]  # Get the first matching book
+            simbook_entry = search_result[0]
             simbook_entry["reason"] = reason  # Attach the correct reason
-            simbooks.append(simbook_entry)  # Append the modified book
+            simbooks.append(simbook_entry)
 
     return render_template("similar.html", book=book, simbooks=simbooks)
 
